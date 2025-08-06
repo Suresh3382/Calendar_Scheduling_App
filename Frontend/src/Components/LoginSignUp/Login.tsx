@@ -28,27 +28,15 @@ const Login = () => {
   });
 
   const handleSubmit = async (values: ILoginInterface) => {
+    console.log("Login Values:", values);
     setIsSubmitting(true);
     try {
       const response = await axios.post(`${baseURL}user/Login`, values);
       if (response.data.result) {
-        const { accessToken, refreshToken, user } = response.data.result;
+        const { accessToken, refreshToken } = response.data.result;
         localStorage.setItem("AccessToken", accessToken);
         localStorage.setItem("RefreshToken", refreshToken);
-        localStorage.setItem(
-          "UDetails",
-          JSON.stringify({
-            user,
-            pfp: user?.pfp || "",
-            role: user?.role,
-          })
-        );
-
-        if (user?.onboardingComplete) {
-          navigate("/home");
-        } else {
-          navigate("/onboarding");
-        }
+        navigate("/");
       }
     } catch (error) {
       console.error("Login Error:", error);
@@ -150,13 +138,14 @@ const Login = () => {
                   />
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end">  
                   <button
                     type="button"
                     className="text-sm text-blue-600 hover:text-blue-700 transition-colors"
                     onClick={() => navigate("/signup")}
                   >
-                    Don't have an account? Sign up
+                    Don't have an account?{" "}
+                    <span className="text-blue-500">Sign up</span>
                   </button>
                 </div>
 
@@ -171,11 +160,11 @@ const Login = () => {
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Logging in...
+                      <div className="w-4 h-4 border-2 text-white border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span className="text-white"> Logging in...</span>
                     </div>
                   ) : (
-                    "Log In"
+                    <span className="text-white"> Log In</span>
                   )}
                 </button>
               </Form>

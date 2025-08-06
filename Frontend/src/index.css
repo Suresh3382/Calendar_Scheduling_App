@@ -1,5 +1,59 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 body {
   font-family: 'Poppins', sans-serif;
+}
+
+.my-first-datepicker.ant-picker {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.my-first-datepicker.ant-picker-focused {
+  box-shadow: none !important;
+}
+
+.my-first-datepicker input {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.my-first-datepicker .ant-picker-input>input {
+  font-size: 22px;
+  font-weight: 600;
+  width: 300px;
+}
+
+:where(.css-dev-only-do-not-override-1vjf2v5).ant-picker-calendar .ant-picker-calendar-header {
+  padding: 15px;
+}
+
+:where(.css-dev-only-do-not-override-1vjf2v5).ant-picker-calendar .ant-picker-panel .ant-picker-body {
+  padding: 15px;
+}
+
+:where(.css-dev-only-do-not-override-1vjf2v5).ant-input-outlined {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.custom-time-picker .ant-picker {
+  border-color: rgb(201, 201, 253);
+}
+
+.custom-time-picker .ant-picker:hover {
+  border-color: rgb(201, 201, 253);
+  height: 35px;
+  display: flex;
+  align-items: center;
+}
+
+.custom-picker {
+  height: 35px;
+  display: flex;
+  align-items: center;
 }

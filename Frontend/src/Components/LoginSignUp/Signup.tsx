@@ -40,12 +40,13 @@ const Signup = () => {
       username: values.username,
       email: values.email,
       password: values.password,
-      role: "USER",
-      onboardingComplete: false,
     };
-
+    console.log("Final Signup Values:", finalSignupValues); 
     try {
-      const response = await axios.post(`${baseURL}user/Signup`, finalSignupValues);
+      const response = await axios.post(
+        `${baseURL}user/signup`,
+        finalSignupValues
+      );
       if (response.data) {
         navigate("/login");
       }
@@ -61,7 +62,8 @@ const Signup = () => {
         <div className="text-center text-white max-w-md">
           <h1 className="text-3xl font-bold mb-4">Join Our Community!</h1>
           <p className="text-blue-100 text-lg leading-relaxed">
-            Create an account to access your dashboard and manage your books and records.
+            Create an account to access your dashboard and manage your books and
+            records.
           </p>
           <div className="mt-8 flex justify-center">
             <img
@@ -78,7 +80,9 @@ const Signup = () => {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-slate-800 mb-2">Sign Up</h2>
-            <p className="text-slate-600">Fill in the details to create your account</p>
+            <p className="text-slate-600">
+              Fill in the details to create your account
+            </p>
           </div>
 
           <Formik
@@ -89,7 +93,10 @@ const Signup = () => {
             {({ values, errors, touched, handleChange, handleBlur }) => (
               <Form className="space-y-6">
                 <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-slate-700 mb-2"
+                  >
                     Username
                   </label>
                   <Input
@@ -114,7 +121,10 @@ const Signup = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-slate-700 mb-2"
+                  >
                     Email
                   </label>
                   <Input
@@ -139,7 +149,10 @@ const Signup = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-slate-700 mb-2"
+                  >
                     Password
                   </label>
                   <Input.Password
@@ -147,7 +160,9 @@ const Signup = () => {
                     name="password"
                     prefix={<LockOutlined />}
                     placeholder="Enter your password"
-                    iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                    iconRender={(visible) =>
+                      visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                    }
                     value={values.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -165,7 +180,10 @@ const Signup = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-slate-700 mb-2"
+                  >
                     Confirm Password
                   </label>
                   <Input.Password
@@ -173,7 +191,9 @@ const Signup = () => {
                     name="confirmPassword"
                     prefix={<LockOutlined />}
                     placeholder="Confirm your password"
-                    iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                    iconRender={(visible) =>
+                      visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                    }
                     value={values.confirmPassword}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -196,7 +216,7 @@ const Signup = () => {
                     className="text-sm text-blue-600 hover:text-blue-700 transition-colors"
                     onClick={() => navigate("/login")}
                   >
-                    Already have an account? Log in
+                    Already have an account? <span className="text-blue-500">Log in</span>
                   </button>
                 </div>
 
@@ -212,10 +232,10 @@ const Signup = () => {
                   {isSubmitting ? (
                     <div className="flex items-center">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Signing up...
+                    <span className="text-white">  Signing up...</span>
                     </div>
                   ) : (
-                    "Sign Up"
+                   <span className="text-white">Sign Up</span>
                   )}
                 </button>
               </Form>
@@ -224,7 +244,8 @@ const Signup = () => {
 
           <div className="mt-8 text-center">
             <p className="text-xs text-slate-500">
-              By signing up, you agree to our Terms of Service and Privacy Policy
+              By signing up, you agree to our Terms of Service and Privacy
+              Policy
             </p>
           </div>
         </div>
