@@ -3,8 +3,9 @@ export interface ILoginInterface {
     password: string
 }
 
-export interface ISignUpInterface{
-    username:string,
-    email:string,
+export interface ISignUpInterface {
+    _id: string,
+    username: string,
+    email: string,
     password: string,
 }

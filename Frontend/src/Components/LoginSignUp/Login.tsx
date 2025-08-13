@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import * as Yup from "yup";
 import axios from "axios";
 import { Input } from "antd";
@@ -34,8 +34,10 @@ const Login = () => {
       const response = await axios.post(`${baseURL}user/Login`, values);
       if (response.data.result) {
         const { accessToken, refreshToken } = response.data.result;
+        const userId = response.data.result.existingUser._id;
         localStorage.setItem("AccessToken", accessToken);
         localStorage.setItem("RefreshToken", refreshToken);
+        localStorage.setItem("userId", userId);
         navigate("/");
       }
     } catch (error) {
@@ -138,7 +140,7 @@ const Login = () => {
                   />
                 </div>
 
-                <div className="flex justify-end">  
+                <div className="flex justify-end">
                   <button
                     type="button"
                     className="text-sm text-blue-600 hover:text-blue-700 transition-colors"

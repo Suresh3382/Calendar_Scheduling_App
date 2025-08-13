@@ -14,7 +14,7 @@ const generateRefreshToken = (id: string) => {
 
 export const Signup = async (req: Request, res: Response) => {
     try {
-        const { username, email, password} = req.body;
+        const { username, email, password } = req.body;
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ success: false, message: 'User with this email already exists!' });
@@ -22,7 +22,7 @@ export const Signup = async (req: Request, res: Response) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new UserModel({ username, email, password: hashedPassword });
         await newUser.save();
-        res.status(200).json({ success: true, message:'Signup success!' })
+        res.status(200).json({ success: true, message: 'Signup success!' })
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server Error' });
     }
@@ -49,7 +49,7 @@ export const Login = async (req: Request, res: Response) => {
             result: {
                 existingUser,
                 accessToken,
-                refreshToken,                
+                refreshToken,
             }
         });
     } catch (error) {
@@ -57,18 +57,13 @@ export const Login = async (req: Request, res: Response) => {
     }
 };
 
-export const RefreshToken = async (req: Request, res: Response) => {
-    const { refreshToken } = req.params;
-    if (!refreshToken) {
-        return res.status(400).json({ success: false, message: 'Refresh Token is required' });
-    }
+export const RefreshToken = async (req: any, res: Response) => {
+    const authUser = req.user;
     try {
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET!) as JwtPayload;
-        const existingUser = await UserModel.findById(decoded.id);
-        if (!existingUser || existingUser.refreshToken !== refreshToken) {
+        if (!authUser) {
             return res.status(403).json({ success: false, message: 'Invalid Refresh Token' });
         }
-        const accessToken = generateAccessToken(existingUser._id.toString());
+        const accessToken = generateAccessToken(authUser._id.toString());
         res.status(200).json({ success: true, message: 'New AccessToken Created', accessToken: accessToken });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Internal Server Error' });
