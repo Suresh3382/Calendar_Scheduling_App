@@ -2,6 +2,7 @@ import type { EventInterface } from "@/Components/Home/EventInterface";
 import type { ISignUpInterface } from "@/Components/LoginSignUp/LoginSignUpInterface";
 import type { Dayjs } from "dayjs";
 import type React from "react";
+import type { View } from "react-big-calendar";
 
 export interface UContextType {
   userEvents: EventInterface[];
@@ -18,6 +19,16 @@ export interface UContextType {
   setCurrentEvent: React.Dispatch<React.SetStateAction<EventInterface | null>>;
   currentUser: ISignUpInterface | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<ISignUpInterface | null>>;
-  loggedUser : ISignUpInterface | null;
-  setLoggedUser : React.Dispatch<React.SetStateAction<ISignUpInterface | null>>;
+  loggedUser: ISignUpInterface | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<ISignUpInterface | null>>;
+  view: View;
+  setView: React.Dispatch<React.SetStateAction<View>>;
+  calendarDate: Date;
+  setCalendarDate: React.Dispatch<React.SetStateAction<Date>>;
+  loader: boolean;
+  setLoader: React.Dispatch<React.SetStateAction<boolean>>;
+  email: string;
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
+  searchedTerm: string,
+  setSearchedTerm : React.Dispatch<React.SetStateAction<string>>;
 }

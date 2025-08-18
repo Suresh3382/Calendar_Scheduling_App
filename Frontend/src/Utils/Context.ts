@@ -18,5 +18,15 @@ export const UContext = createContext<UContextType>({
     currentUser: null,
     setCurrentUser: () => { },
     loggedUser: null,
-    setLoggedUser: () => { }
+    setLoggedUser: () => { },
+    view: "month",
+    setView: () => { },
+    calendarDate: new Date(),
+    setCalendarDate: () => { },
+    loader: false,
+    setLoader: () => { },
+    email: '',
+    setEmail: () => { },
+    searchedTerm: "",
+    setSearchedTerm: () => { }
 });

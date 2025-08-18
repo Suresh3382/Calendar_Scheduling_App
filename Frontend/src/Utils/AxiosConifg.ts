@@ -1,22 +1,20 @@
 import axios from "axios";
 import { baseURL } from "../baseURL";
 
-type methodType = "get" | "post" ;
+type methodType = "get" | "post";
 
 export const callApi = async ({ requestEndpoint, method, body }: { requestEndpoint: string, method: methodType, body?: any }) => {
     try {
-        if (requestEndpoint) {
-            const token = localStorage.getItem('AccessToken')
-            const headers = {
-                contentType: 'application/json',
-                authorization: token
-            }
-            const axiosInstance = axios.create({
-                headers
-            })
-            const response = await axiosInstance[method](requestEndpoint, body)
-            return response
+        const token = localStorage.getItem('AccessToken')
+        const headers = {
+            contentType: 'application/json',
+            authorization: token
         }
+        const axiosInstance = axios.create({
+            headers
+        })
+        const response = await axiosInstance[method](requestEndpoint, body)
+        return response
     }
     catch (error: any) {
         console.log(error)

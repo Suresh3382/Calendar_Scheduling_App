@@ -41,7 +41,7 @@ const Signup = () => {
       email: values.email,
       password: values.password,
     };
-    console.log("Final Signup Values:", finalSignupValues); 
+    console.log("Final Signup Values:", finalSignupValues);
     try {
       const response = await axios.post(
         `${baseURL}user/signup`,
@@ -216,7 +216,8 @@ const Signup = () => {
                     className="text-sm text-blue-600 hover:text-blue-700 transition-colors"
                     onClick={() => navigate("/login")}
                   >
-                    Already have an account? <span className="text-blue-500">Log in</span>
+                    Already have an account?{" "}
+                    <span className="text-blue-500">Log in</span>
                   </button>
                 </div>
 
@@ -232,10 +233,10 @@ const Signup = () => {
                   {isSubmitting ? (
                     <div className="flex items-center">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    <span className="text-white">  Signing up...</span>
+                      <span className="text-white"> Signing up...</span>
                     </div>
                   ) : (
-                   <span className="text-white">Sign Up</span>
+                    <span className="text-white">Sign Up</span>
                   )}
                 </button>
               </Form>

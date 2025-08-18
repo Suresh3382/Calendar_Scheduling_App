@@ -19,6 +19,12 @@ export class Event {
     @prop()
     public notification: boolean;
 
+    @prop()
+    public recurrence: string;
+
+    @prop()
+    public recurrenceEnd?: Date;
+
     @prop({ required: true })
     public visibility: "PUBLIC" | "PRIVATE";
 

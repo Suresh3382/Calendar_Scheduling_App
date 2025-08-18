@@ -50,7 +50,7 @@ body {
   height: 35px;
   display: flex;
   align-items: center;
-} 
+}
 
 /* 
 :where(.css-dev-only-do-not-override-1vjf2v5).ant-input-outlined {
@@ -67,14 +67,14 @@ body {
 
 .custom-input .ant-select-selector,
 .custom-input .ant-picker,
-.custom-input .ant-picker-input > input,
+.custom-input .ant-picker-input>input,
 .custom-input input {
   height: 35px !important;
   font-size: 14px;
   line-height: 35px;
 }
 
-.rbc-header{
+.rbc-header {
   height: 50px;
   display: flex;
   align-items: center;
@@ -82,11 +82,30 @@ body {
   padding-right: 10px !important;
 }
 
-.rbc-date-cell{
+.rbc-date-cell {
   padding: 10px !important;
 }
 
 .my-event-modal .ant-modal-content {
   padding: 0 !important;
   border-radius: 10px;
+}
+
+:where(.css-dev-only-do-not-override-1vjf2v5).ant-popover .ant-popover-inner {
+  padding: 6px;
+}
+
+:where(.css-dev-only-do-not-override-l9pxc0).ant-popover .ant-popover-inner {
+  padding: 5px;
+}
+
+:where(.css-dev-only-do-not-override-l9pxc0).ant-input-affix-wrapper {
+  padding: 6px;
+}
+
+:where(.css-dev-only-do-not-override-l9pxc0)[class^="ant-input"] [class^="ant-input"],
+:where(.css-dev-only-do-not-override-l9pxc0)[class*=" ant-input"] [class^="ant-input"],
+:where(.css-dev-only-do-not-override-l9pxc0)[class^="ant-input"] [class*=" ant-input"],
+:where(.css-dev-only-do-not-override-l9pxc0)[class*=" ant-input"] [class*=" ant-input"] {
+  padding: 3px;
 }

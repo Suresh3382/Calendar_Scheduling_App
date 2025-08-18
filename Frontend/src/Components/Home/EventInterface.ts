@@ -1,6 +1,8 @@
 import type { Dayjs } from "dayjs";
 
 export interface EventInterface {
+  _id?: string;
+  userId?: string;
   title: string;
   description: string;
   start: Dayjs;
@@ -8,6 +10,8 @@ export interface EventInterface {
   location: string;
   allDay: boolean;
   notification: boolean;
+  recurrence: string | null,
+  recurrenceEnd?: Date;
   guest: string;
-  visibility: string | null;
+  visibility: "PUBLIC" | "PRIVATE" | null;
 }

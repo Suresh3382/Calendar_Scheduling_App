@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import axios from "axios";
-import { Input } from "antd";
+import { Input, message } from "antd";
 import {
   EyeInvisibleOutlined,
   EyeTwoTone,
@@ -12,6 +12,7 @@ import { Formik, Form, ErrorMessage } from "formik";
 import type { ILoginInterface } from "./LoginSignUpInterface";
 import { baseURL } from "../../baseURL";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -40,7 +41,15 @@ const Login = () => {
         localStorage.setItem("userId", userId);
         navigate("/");
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        const { message } = error.response.data;
+        toast.error(message);
+      }
       console.error("Login Error:", error);
     }
     setIsSubmitting(false);
@@ -49,7 +58,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gradient-to-br from-blue-500 to-blue-600">
-        <div className="text-center text-white max-w-md gap">
+        <div className="text-center text-white max-w-md">
           <h1 className="text-3xl font-bold mb-4">Welcome Back!</h1>
           <p className="text-blue-100 text-lg leading-relaxed">
             Log in to access your dashboard and manage your account with ease.
@@ -64,7 +73,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
@@ -108,7 +116,6 @@ const Login = () => {
                     className="mt-2 text-sm text-red-600 flex items-center"
                   />
                 </div>
-
                 <div>
                   <label
                     htmlFor="password"
@@ -139,7 +146,6 @@ const Login = () => {
                     className="mt-2 text-sm text-red-600 flex items-center"
                   />
                 </div>
-
                 <div className="flex justify-end">
                   <button
                     type="button"
@@ -150,7 +156,6 @@ const Login = () => {
                     <span className="text-blue-500">Sign up</span>
                   </button>
                 </div>
-
                 <button
                   type="submit"
                   disabled={isSubmitting}

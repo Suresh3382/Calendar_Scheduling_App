@@ -12,7 +12,7 @@ export const getUser = async (req: any, res: Response) => {
     try {
         const users = await UserModel.find({
             email: {
-                $regex: new RegExp(email, "i"),
+                $regex: new RegExp(email),
                 $ne: loggedUserEmail
             }
         });

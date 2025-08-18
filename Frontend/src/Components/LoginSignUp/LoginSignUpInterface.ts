@@ -4,8 +4,9 @@ export interface ILoginInterface {
 }
 
 export interface ISignUpInterface {
-    _id: string,
+    _id?: string,
     username: string,
     email: string,
     password: string,
+    confirmPassword?: string,
 }

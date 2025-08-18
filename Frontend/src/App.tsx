@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Components/LoginSignUp/Login";
 import Signup from "./Components/LoginSignUp/Signup";
@@ -11,22 +11,24 @@ import dayjs from "dayjs";
 import type { ISignUpInterface } from "./Components/LoginSignUp/LoginSignUpInterface";
 import { callApi } from "./Utils/AxiosConifg";
 import { baseURL } from "./baseURL";
+import type { View } from "react-big-calendar";
+import { Toaster } from "react-hot-toast";
+import ProfilePage from "./Components/Profile/ProfilePage";
 
 const App = () => {
-  const [userEvents, setUserEvents] = React.useState<EventInterface[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [date, setDate] = React.useState<Dayjs>(dayjs());
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [refreshEvents, setRefreshEvents] = React.useState(false);
-  const [currentEvent, setCurrentEvent] = React.useState<EventInterface | null>(
-    null
-  );
-  const [currentUser, setCurrentUser] = React.useState<ISignUpInterface | null>(
-    null
-  );
-  const [loggedUser, setLoggedUser] = React.useState<ISignUpInterface | null>(
-    null
-  );
+  const [userEvents, setUserEvents] = useState<EventInterface[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [date, setDate] = useState<Dayjs>(dayjs());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [refreshEvents, setRefreshEvents] = useState(false);
+  const [currentEvent, setCurrentEvent] = useState<EventInterface | null>(null);
+  const [currentUser, setCurrentUser] = useState<ISignUpInterface | null>(null);
+  const [loggedUser, setLoggedUser] = useState<ISignUpInterface | null>(null);
+  const [email, setEmail] = useState<string>("");
+  const [view, setView] = useState<View>("month");
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [loader, setLoader] = useState<boolean>(false);
+  const [searchedTerm, setSearchedTerm] = useState<string>("");
 
   const userId = localStorage.getItem("userId");
   const AccessToken = localStorage.getItem("AccessToken");
@@ -66,6 +68,16 @@ const App = () => {
         setCurrentUser,
         loggedUser,
         setLoggedUser,
+        view,
+        setView,
+        calendarDate,
+        setCalendarDate,
+        loader,
+        setLoader,
+        email,
+        setEmail,
+        searchedTerm,
+        setSearchedTerm,
       }}
     >
       <Routes>
@@ -82,7 +94,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/Profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
+      <Toaster />
     </UContext.Provider>
   );
 };
