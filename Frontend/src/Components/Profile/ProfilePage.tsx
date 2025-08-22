@@ -1,11 +1,20 @@
-import { useState } from "react";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { Input, Button, Avatar, Upload, message, Select, DatePicker, TimePicker } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
-
-const { Option } = Select;
+import React, { useState, useRef, useContext } from "react";
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  MapPin,
+  Globe,
+  Clock,
+  Languages,
+  Edit,
+  Save,
+  X,
+  Camera,
+  Check,
+  ChevronDown,
+} from "lucide-react";
 
 interface UserProfile {
   name: string;
@@ -22,226 +31,404 @@ interface UserProfile {
   language: string;
 }
 
-const ProfilePage = () => {
+function ProfilePage() {
   const [editMode, setEditMode] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const initialValues: UserProfile = {
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "1234567890",
-    age: "25",
+  const [profile, setProfile] = useState<UserProfile>({
+    name: "",
+    email: "",
+    phone: "",
+    age: "",
     profilePic: "",
-    gender: "Male",
-    dob: "1998-08-18",
-    address: "123 Main St",
-    city: "New York",
-    country: "USA",
-    timeZone: "GMT+5:30",
-    language: "English",
-  };
-
-  const ProfileSchema = Yup.object().shape({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    phone: Yup.string().required("Phone is required"),
-    age: Yup.number().required("Age is required"),
-    gender: Yup.string().required("Gender is required"),
-    dob: Yup.string().required("DOB is required"),
-    address: Yup.string().required("Address is required"),
-    city: Yup.string().required("City is required"),
-    country: Yup.string().required("Country is required"),
-    timeZone: Yup.string().required("Time zone is required"),
-    language: Yup.string().required("Language is required"),
+    gender: "",
+    dob: "",
+    address: "",
+    city: "",
+    country: "",
+    timeZone: "",
+    language: "",
   });
 
+  const [tempProfile, setTempProfile] = useState<UserProfile>(profile);
+
+  const handleFieldChange = (field: keyof UserProfile, value: string) => {
+    setTempProfile((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setTempProfile((prev) => ({
+          ...prev,
+          profilePic: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = () => {
+    setProfile(tempProfile);
+    setEditMode(false);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
+
+  const handleCancel = () => {
+    setTempProfile(profile);
+    setEditMode(false);
+  };
+
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">User Profile</h2>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={ProfileSchema}
-        onSubmit={(values) => {
-          console.log("Updated Profile:", values);
-          message.success("Profile updated successfully!");
-          setEditMode(false);
-        }}
-      >
-        {({ values, errors, touched, setFieldValue }) => (
-          <Form className="flex flex-col gap-6">
-            {/* Avatar */}
-            <div className="flex flex-col items-center gap-3">
-              <Avatar
-                size={120}
-                src={values.profilePic}
-                className="shadow-lg"
-                style={{ cursor: editMode ? "pointer" : "default" }}
-              >
-                {!values.profilePic && values.name.charAt(0)}
-              </Avatar>
-              {editMode && (
-                <Upload
-                  showUploadList={false}
-                  beforeUpload={(file) => {
-                    const reader = new FileReader();
-                    reader.onload = () => setFieldValue("profilePic", reader.result);
-                    reader.readAsDataURL(file);
-                    return false;
-                  }}
-                >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
-              )}
-            </div>
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      {showSuccess && (
+        <div className="fixed top-6 right-6 z-50 bg-white border border-green-200 text-green-800 px-4 py-3 rounded-lg shadow-sm flex items-center">
+          <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3">
+            <Check className="h-3 w-3 text-green-600" />
+          </div>
+          Profile updated successfully
+        </div>
+      )}
 
-            {/* Grid of fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          {/* Header */}
+          <div className="px-6 py-5 border-b border-gray-100">
+            <div className="flex items-center justify-between">
               <div>
-                <label className="font-medium">Name</label>
-                <Input
-                  value={values.name}
-                  onChange={(e) => setFieldValue("name", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.name && touched.name && <span className="text-red-500">{errors.name}</span>}
+                <h1 className="text-xl font-semibold text-gray-900">Profile</h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  Manage your personal information
+                </p>
               </div>
-
-              <div>
-                <label className="font-medium">Email</label>
-                <Input
-                  value={values.email}
-                  onChange={(e) => setFieldValue("email", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.email && touched.email && <span className="text-red-500">{errors.email}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Phone</label>
-                <Input
-                  value={values.phone}
-                  onChange={(e) => setFieldValue("phone", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.phone && touched.phone && <span className="text-red-500">{errors.phone}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Age</label>
-                <Input
-                  value={values.age}
-                  onChange={(e) => setFieldValue("age", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.age && touched.age && <span className="text-red-500">{errors.age}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Gender</label>
-                <Select
-                  value={values.gender}
-                  onChange={(value) => setFieldValue("gender", value)}
-                  disabled={!editMode}
-                  className="w-full"
-                >
-                  <Option value="Male">Male</Option>
-                  <Option value="Female">Female</Option>
-                  <Option value="Other">Other</Option>
-                </Select>
-                {errors.gender && touched.gender && <span className="text-red-500">{errors.gender}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Date of Birth</label>
-                <DatePicker
-                  value={dayjs(values.dob)}
-                  onChange={(date) => setFieldValue("dob", date?.format("YYYY-MM-DD"))}
-                  disabled={!editMode}
-                  className="w-full"
-                />
-                {errors.dob && touched.dob && <span className="text-red-500">{errors.dob}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Address</label>
-                <Input
-                  value={values.address}
-                  onChange={(e) => setFieldValue("address", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.address && touched.address && <span className="text-red-500">{errors.address}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">City</label>
-                <Input
-                  value={values.city}
-                  onChange={(e) => setFieldValue("city", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.city && touched.city && <span className="text-red-500">{errors.city}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Country</label>
-                <Input
-                  value={values.country}
-                  onChange={(e) => setFieldValue("country", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.country && touched.country && <span className="text-red-500">{errors.country}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Time Zone</label>
-                <Select
-                  value={values.timeZone}
-                  onChange={(value) => setFieldValue("timeZone", value)}
-                  disabled={!editMode}
-                  className="w-full"
-                >
-                  <Option value="GMT-12:00">GMT-12:00</Option>
-                  <Option value="GMT-08:00">GMT-08:00</Option>
-                  <Option value="GMT+00:00">GMT+00:00</Option>
-                  <Option value="GMT+05:30">GMT+05:30</Option>
-                  <Option value="GMT+10:00">GMT+10:00</Option>
-                  <Option value="GMT+12:00">GMT+12:00</Option>
-                </Select>
-                {errors.timeZone && touched.timeZone && <span className="text-red-500">{errors.timeZone}</span>}
-              </div>
-
-              <div>
-                <label className="font-medium">Language</label>
-                <Input
-                  value={values.language}
-                  onChange={(e) => setFieldValue("language", e.target.value)}
-                  disabled={!editMode}
-                />
-                {errors.language && touched.language && <span className="text-red-500">{errors.language}</span>}
-              </div>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-3 justify-end mt-4">
               {!editMode ? (
-                <Button type="primary" onClick={() => setEditMode(true)}>
-                  Edit Profile
-                </Button>
+                <button
+                  onClick={() => setEditMode(true)}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </button>
               ) : (
-                <>
-                  <Button type="default" onClick={() => setEditMode(false)}>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCancel}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                  >
+                    <X className="h-4 w-4 mr-2" />
                     Cancel
-                  </Button>
-                  <Button type="primary" htmlType="submit">
-                    Save Changes
-                  </Button>
-                </>
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Save
+                  </button>
+                </div>
               )}
             </div>
-          </Form>
-        )}
-      </Formik>
+          </div>
+
+          {/* Profile Picture Section */}
+          <div className="px-6 py-6 border-b border-gray-100">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                  {tempProfile.profilePic ? (
+                    <img
+                      src={tempProfile.profilePic}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-8 h-8 text-gray-400" />
+                  )}
+                </div>
+                {editMode && (
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute -bottom-1 -right-1 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </button>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </div>
+              <div>
+                <h2 className="text-lg font-medium text-gray-900">
+                  {tempProfile.name}
+                </h2>
+                <p className="text-sm text-gray-500">{tempProfile.email}</p>
+                <div className="flex items-center mt-1 text-sm text-gray-400">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  {tempProfile.city}{tempProfile.country}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-6 py-6">
+            <div className="space-y-8">
+              {/* Personal Information */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-900 mb-4">
+                  Personal Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Name
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={tempProfile.name}
+                        onChange={(e) =>
+                          handleFieldChange("name", e.target.value)
+                        }
+                        disabled={!editMode}
+                        className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="email"
+                        value={tempProfile.email}
+                        onChange={(e) =>
+                          handleFieldChange("email", e.target.value)
+                        }
+                        disabled={!editMode}
+                        className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                        placeholder="Enter your email"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="tel"
+                        value={tempProfile.phone}
+                        onChange={(e) =>
+                          handleFieldChange("phone", e.target.value)
+                        }
+                        disabled={!editMode}
+                        className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                        placeholder="Enter your phone number"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Age
+                    </label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="number"
+                        value={tempProfile.age}
+                        onChange={(e) =>
+                          handleFieldChange("age", e.target.value)
+                        }
+                        disabled={!editMode}
+                        className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                        placeholder="Enter your age"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gender
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                      <select
+                        value={tempProfile.gender}
+                        onChange={(e) =>
+                          handleFieldChange("gender", e.target.value)
+                        }
+                        disabled={!editMode}
+                        className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors appearance-none bg-white"
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">
+                          Prefer not to say
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Date of Birth
+                    </label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="date"
+                        value={tempProfile.dob}
+                        onChange={(e) =>
+                          handleFieldChange("dob", e.target.value)
+                        }
+                        disabled={!editMode}
+                        className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Location & Preferences */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-900 mb-4">
+                  Location & Preferences
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Street Address
+                    </label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={tempProfile.address}
+                        onChange={(e) =>
+                          handleFieldChange("address", e.target.value)
+                        }
+                        disabled={!editMode}
+                        className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                        placeholder="Enter your street address"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={tempProfile.city}
+                          onChange={(e) =>
+                            handleFieldChange("city", e.target.value)
+                          }
+                          disabled={!editMode}
+                          className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                          placeholder="Enter your city"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Country
+                      </label>
+                      <div className="relative">
+                        <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={tempProfile.country}
+                          onChange={(e) =>
+                            handleFieldChange("country", e.target.value)
+                          }
+                          disabled={!editMode}
+                          className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                          placeholder="Enter your country"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Time Zone
+                      </label>
+                      <div className="relative">
+                        <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                        <select
+                          value={tempProfile.timeZone}
+                          onChange={(e) =>
+                            handleFieldChange("timeZone", e.target.value)
+                          }
+                          disabled={!editMode}
+                          className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors appearance-none bg-white"
+                        >
+                          <option value="GMT-12:00">
+                            GMT-12:00 (Baker Island)
+                          </option>
+                          <option value="GMT-08:00">GMT-08:00 (PST)</option>
+                          <option value="GMT-05:00">GMT-05:00 (EST)</option>
+                          <option value="GMT+00:00">GMT+00:00 (UTC)</option>
+                          <option value="GMT+05:30">GMT+05:30 (IST)</option>
+                          <option value="GMT+08:00">GMT+08:00 (CST)</option>
+                          <option value="GMT+09:00">GMT+09:00 (JST)</option>
+                          <option value="GMT+10:00">GMT+10:00 (AEST)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Language
+                      </label>
+                      <div className="relative">
+                        <Languages className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={tempProfile.language}
+                          onChange={(e) =>
+                            handleFieldChange("language", e.target.value)
+                          }
+                          disabled={!editMode}
+                          className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+                          placeholder="Enter preferred language"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default ProfilePage;

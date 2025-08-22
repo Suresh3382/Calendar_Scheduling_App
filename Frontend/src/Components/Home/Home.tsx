@@ -57,13 +57,12 @@ const Home = () => {
     userEvents,
     searchedTerm,
     setSearchedTerm,
+    loggedUser,
   } = useContext(UContext);
   const [calendarValue, setCalendarValue] = useState(dayjs());
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchEventsResults, setSearchEventsResults] = useState<any[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
-
-  const filteredEvents = "";
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -154,7 +153,10 @@ const Home = () => {
       callApi({
         requestEndpoint: `${baseURL}user/getSearchTermEvents`,
         method: "post",
-        body: { searchTerm: searchedTerm },
+        body: {
+          searchTerm: searchedTerm,
+          userId: currentUser ? currentUser._id : loggedUser,
+        },
       })
         .then((response) => {
           setSearchEventsResults(response.data.data);
@@ -216,7 +218,7 @@ const Home = () => {
               className="rounded-xl border border-gray-200 shadow-sm hover:border-blue-400 focus:border-blue-500 transition-all duration-200"
             />
             {searchedTerm && (
-              <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-xl shadow-lg h-[280px] overflow-y-auto z-50 animate-slideDown">
+              <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-xl shadow-lg h-[200px] overflow-y-auto z-50 animate-slideDown">
                 {loadingSearch ? (
                   <div className="flex flex-col gap-2 p-2">
                     {[1, 2, 3].map((_, idx) => (
@@ -252,6 +254,9 @@ const Home = () => {
                   searchEventsResults.map((event: EventInterface, idx) => (
                     <div
                       key={event._id || idx}
+                      onClick={() =>
+                        setCalendarDate(dayjs(event.start).toDate())
+                      }
                       className="flex items-center p-3 hover:bg-blue-50 rounded-xl cursor-pointer transition-all duration-200"
                     >
                       <div className="w-12 h-12 flex items-center justify-center bg-blue-300 text-white rounded-full font-bold">
@@ -307,11 +312,15 @@ const Home = () => {
             validationSchema={EventSchema}
             onSubmit={async (values: EventInterface, { resetForm }) => {
               try {
+                const finalValues = {
+                  ...values,
+                  recurrence: values.recurrence || "NO",
+                };
                 setLoader(true);
                 const res = await callApi({
                   requestEndpoint: `${baseURL}user/addEvent`,
                   method: "post",
-                  body: values,
+                  body: finalValues,
                 });
                 if (res.data.success) {
                   setDate(dayjs());
@@ -375,24 +384,24 @@ const Home = () => {
                           <label className="mb-1">
                             Date <span className="text-red-500">*</span>
                           </label>
-                          <DatePicker
-                            className="custom-input w-60"
-                            value={values.start ? dayjs(values.start) : null}
-                            onChange={(date) => {
+                          <DatePicker.RangePicker
+                            className="custom-input w-64"
+                            value={[
+                              values.start ? dayjs(values.start) : null,
+                              values.end ? dayjs(values.end) : null,
+                            ]}
+                            onChange={(dates) => {
+                              if (!dates) return;
+
+                              let [startDate, endDate] = dates;
+
                               if (values.allDay) {
-                                const startDate = dayjs(date)
-                                  .hour(0)
-                                  .minute(0)
-                                  .second(0)
-                                  .millisecond(0);
-                                const endDate = dayjs(date)
-                                  .hour(23)
-                                  .minute(59)
-                                  .second(59)
-                                  .millisecond(999);
-                                setFieldValue("start", startDate);
-                                setFieldValue("end", endDate);
+                                startDate = startDate?.startOf("day") ?? null;
+                                endDate = endDate?.endOf("day") ?? null;
                               }
+
+                              setFieldValue("start", startDate);
+                              setFieldValue("end", endDate);
                             }}
                           />
                         </div>
@@ -401,7 +410,7 @@ const Home = () => {
                       {!values.allDay && (
                         <div className="flex flex-col w-full">
                           <label className="mb-1">
-                            Date Range <span className="text-red-500">*</span>
+                            Date <span className="text-red-500">*</span>
                           </label>
                           <DatePicker.RangePicker
                             showTime={{ format: "HH:mm" }}
@@ -451,14 +460,12 @@ const Home = () => {
                         value={values.recurrence}
                         onChange={(value) => setFieldValue("recurrence", value)}
                         options={[
-                          { label: "Daily", value: "daily" },
-                          { label: "Weekly", value: "weekly" },
-                          { label: "Monthly", value: "monthly" },
-                          { label: "Yearly", value: "yearly" },
+                          { label: "Daily", value: "DAILY" },
+                          { label: "Weekly", value: "WEEKLY" },
                         ]}
                       />
                     </div>
-
+                    {values.start === (values.end)}
                     <div className="flex flex-col gap-1">
                       <label htmlFor="visibility">
                         Visibility <span className="text-red-500">*</span>
@@ -650,40 +657,42 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col gap-0.5">
-              <p className="text-lg font-medium">Monthly Overview</p>
+            {!currentUser && (
+              <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col gap-0.5">
+                <p className="text-lg font-medium">Monthly Overview</p>
 
-              <div className="flex justify-between py-0.5">
-                <span>Events Today :</span>
-                <span className="font-medium">
-                  {userEvents?.filter((e) =>
-                    dayjs(e.start).isSame(dayjs(), "day")
-                  ).length || 0}
-                </span>
-              </div>
+                <div className="flex justify-between py-0.5">
+                  <span>Events Today :</span>
+                  <span className="font-medium">
+                    {userEvents?.filter((e) =>
+                      dayjs(e.start).isSame(dayjs(), "day")
+                    ).length || 0}
+                  </span>
+                </div>
 
-              <div className="flex justify-between py-0.5">
-                <span>Events This Week :</span>
-                <span className="font-medium">
-                  {userEvents?.filter((e) =>
-                    dayjs(e.start).isSame(dayjs(), "week")
-                  ).length || 0}
-                </span>
-              </div>
+                <div className="flex justify-between py-0.5">
+                  <span>Events This Week :</span>
+                  <span className="font-medium">
+                    {userEvents?.filter((e) =>
+                      dayjs(e.start).isSame(dayjs(), "week")
+                    ).length || 0}
+                  </span>
+                </div>
 
-              <div className="flex justify-between pb-1 pt-0.5">
-                <span>Events This Month :</span>
-                <span className="font-medium">
-                  {userEvents?.filter((e) =>
-                    dayjs(e.start).isSame(dayjs(), "month")
-                  ).length || 0}
-                </span>
+                <div className="flex justify-between pb-1 pt-0.5">
+                  <span>Events This Month :</span>
+                  <span className="font-medium">
+                    {userEvents?.filter((e) =>
+                      dayjs(e.start).isSame(dayjs(), "month")
+                    ).length || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between pt-0.5">
+                  <span>Total Events :</span>
+                  <span className="font-medium">{userEvents?.length || 0}</span>
+                </div>
               </div>
-              <div className="flex justify-between pt-0.5">
-                <span>Total Events :</span>
-                <span className="font-medium">{userEvents?.length || 0}</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
         <div className="w-[83vw] h-[82vh] bg-white text-white p-4 rounded-lg shadow-sm">

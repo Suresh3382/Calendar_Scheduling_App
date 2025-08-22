@@ -1,9 +1,8 @@
 import { useContext } from "react";
-import { User2Icon, LogOut, User, User2 } from "lucide-react";
+import { User2Icon, LogOut, User } from "lucide-react";
 import { Avatar, Popover } from "antd";
-import Home from "../Home/Home";
 import { UContext } from "@/Utils/Context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
 const Layout = () => {
   const { loggedUser } = useContext(UContext);
@@ -24,7 +23,7 @@ const Layout = () => {
             alt="Profile"
             className="rounded-full border-2 border-white object-cover"
           >
-            <User2 size={30} />
+            <User2Icon size={30} />
           </Avatar>
           <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
         </div>
@@ -39,7 +38,7 @@ const Layout = () => {
       <div className="mt-4 space-y-2">
         <button
           onClick={() => navigate("/Profile")}
-          className="w-full cursor-pointer flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
         >
           <User size={16} className="text-gray-500" />
           <span>Profile Settings</span>
@@ -49,7 +48,7 @@ const Layout = () => {
       <div className="mt-4 border-t border-gray-200 pt-3">
         <button
           onClick={handleLogout}
-          className="w-full cursor-pointer flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium !text-red-600 hover:bg-gray-100 rounded-md transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium !text-red-600 hover:bg-gray-100 rounded-md transition-colors"
         >
           <LogOut size={16} />
           Sign Out
@@ -60,6 +59,7 @@ const Layout = () => {
 
   return (
     <div className="h-screen flex flex-col font-[Poppins]">
+      {/* Navbar */}
       <div className="sticky top-0 z-50 flex items-center justify-between bg-[#ffffff] px-6 py-4 h-[7vh] shadow">
         <span className="font-semibold">
           <img src="/logo.png" alt="App Logo" className="h-10 w-56" />
@@ -77,9 +77,8 @@ const Layout = () => {
           </Popover>
         </div>
       </div>
-
       <div className="flex-1 w-full bg-[#F1F5F9] p-3 overflow-auto">
-        <Home />
+        <Outlet />
       </div>
     </div>
   );

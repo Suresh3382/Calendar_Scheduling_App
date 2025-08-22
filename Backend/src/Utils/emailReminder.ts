@@ -23,31 +23,29 @@ export const sendReminder = async (
         from: process.env.EMAIL_USER,
         to: email,
         subject: `📅 Reminder: ${eventName}`,
-        html: `<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; padding: 40px;">
-                <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); overflow: hidden;">
-    
-                  <div style="padding: 30px 25px; text-align: center; border-bottom: 1px solid #e0e0e0;">
-                    <h1 style="margin: 0; font-size: 30px; color: #333;">Upcoming Event Reminder</h1>
+        html: `<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; padding: 40px;">
+                    <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); overflow: hidden;">
+                        <div style="padding: 25px; text-align: center; border-bottom: 1px solid #eee;">
+                         <h2 style="margin: 0; font-size: 24px; font-weight: 600; color: #222;">Event Reminder</h2>
+                        </div>
+
+                        <div style="padding: 25px; color: #333; font-size: 15px; line-height: 1.6;">
+                          <p style="margin: 0 0 12px 0;">Hi there,</p>
+                          <p style="margin: 0 0 20px 0;">Here’s a quick reminder for your upcoming event:</p>
+
+                          <div style="border-radius: 8px; margin: 20px 0;">
+                            <p style="margin: 0 0 6px 0; font-weight: 600;"><strong>Event Name :</strong> ${eventName}</p>
+                            <p style="margin: 0; font-weight: 500;"><strong>Date & Time:</strong> ${dayjs(eventTime).format("DD MMM YYYY, hh:mm A")}</p>
+                          </div>
+
+                          <p style="margin: 0 0 25px 0;">Please be prepared and don’t miss it!</p>
+
+                          <p style="margin: 0; font-size: 13px; color: #888; text-align: center;">This is an automated reminder from your Calendar App.</p>
+                        </div>
+
                     </div>
-    
-                  <div style="padding: 35px 25px; color: #333; font-size: 16px; line-height: 1.7;">
-                    <p>Hi there,</p>
-                    <p>This is a friendly reminder for your upcoming event:</p>
-      
-                    <div style="background: #f8f8ff; padding: 22px; border-radius: 10px; margin: 25px 0; border: 1px solid #e0e0ff;">
-                         <p style="margin: 0 0 8px 0; font-weight: 600;"><strong>Event:</strong> ${eventName}</p>
-                            <p style="margin: 0; font-weight: 500;"><strong>Date & Time:</strong> ${dayjs(
-                           eventTime
-                        ).format("DD MMM YYYY, hh:mm A")}</p>
-                    </div>
-      
-                     <p>Make sure you’re ready and prepared!</p>
-                  
-                     <p style="margin-top: 30px; font-size: 14px; color: #999;">This is an automated reminder from your Calendar App.</p>
                 </div>
-            </div>
-        </div>
-    `,
+            `,
     };
 
     try {

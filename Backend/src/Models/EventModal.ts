@@ -20,10 +20,7 @@ export class Event {
     public notification: boolean;
 
     @prop()
-    public recurrence: string;
-
-    @prop()
-    public recurrenceEnd?: Date;
+    public recurrence: "DAILY" | "WEEKLY" | "NO";
 
     @prop({ required: true })
     public visibility: "PUBLIC" | "PRIVATE";

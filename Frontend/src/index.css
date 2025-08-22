@@ -109,3 +109,8 @@ body {
 :where(.css-dev-only-do-not-override-l9pxc0)[class*=" ant-input"] [class*=" ant-input"] {
   padding: 3px;
 }
+
+.my-popconfirm.ant-popover .ant-popover-inner {
+  padding: 10px;
+  border-radius: 12px;
+}

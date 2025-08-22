@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { EventModel } from "../Models/EventModal";
 import { Request, Response } from "express";
 
@@ -11,7 +12,6 @@ export const AddEvent = async (req: any, res: Response) => {
     toTime,
     notification,
     recurrence,
-    recurrenceEnd,
     visibility,
     guest,
     location,
@@ -29,7 +29,6 @@ export const AddEvent = async (req: any, res: Response) => {
       toTime,
       notification,
       recurrence,
-      recurrenceEnd,
       visibility,
       guest,
       location,
@@ -45,34 +44,61 @@ export const AddEvent = async (req: any, res: Response) => {
 export const getEvents = async (req: any, res: Response) => {
   const loggedInUserId = req.user?._id?.toString();
   const requestedUserId = req?.body?.requestedUserId;
-  try {
-    if (requestedUserId === loggedInUserId) {
-      const events = await EventModel.find({ userId: loggedInUserId });
-      console.log("Evemts: ", events)
-      return res.status(200).json({ success: true, data: events });
 
+  try {
+    let events;
+
+    if (requestedUserId === loggedInUserId) {
+      events = await EventModel.find({ userId: loggedInUserId });
     } else {
-      const events = await EventModel.find({
+      events = await EventModel.find({
         userId: String(requestedUserId),
         visibility: "PUBLIC",
       });
-      return res.status(200).json({ success: true, data: events });
     }
+
+    const expandedEvents: any[] = [];
+
+    events.forEach((event) => {
+      const { start, end, recurrence } = event;
+
+      if (recurrence === "NO") {
+        expandedEvents.push(event);
+      } else if (recurrence === "DAILY") {
+        for (let i = 0; i < 365; i++) {
+          expandedEvents.push({
+            ...event.toObject(),
+            start: dayjs(start).add(i, "day").toDate(),
+            end: dayjs(end).add(i, "day").toDate(),
+          });
+        }
+      } else if (recurrence === "WEEKLY") {
+        for (let i = 0; i < 52; i++) {
+          expandedEvents.push({
+            ...event.toObject(),
+            start: dayjs(start).add(i, "week").toDate(),
+            end: dayjs(end).add(i, "week").toDate(),
+          });
+        }
+      }
+    });
+
+    return res.status(200).json({ success: true, data: expandedEvents });
   } catch (error) {
     const err = error as Error;
     return res.status(500).json({ success: false, message: err.message });
   }
 };
 
+
 export const searchEvents = async (req: any, res: Response) => {
   try {
-    const loggedInUserId = req?.user?._id?.toString();
-    const { searchTerm } = req.body;
+    const { searchTerm, userId } = req.body;
 
     const regex = new RegExp(searchTerm, "i");
 
     const events = await EventModel.find({
-      userId: loggedInUserId,
+      userId: userId,
       title: { $regex: regex },
     });
 

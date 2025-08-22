@@ -10,8 +10,7 @@ export interface EventInterface {
   location: string;
   allDay: boolean;
   notification: boolean;
-  recurrence: string | null,
-  recurrenceEnd?: Date;
+  recurrence?: "DAILY" | "MONTHLY" | "NO" | null,
   guest: string;
   visibility: "PUBLIC" | "PRIVATE" | null;
 }

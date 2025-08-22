@@ -18,7 +18,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { EventInterface } from "../Home/EventInterface";
-import { Modal, Spin } from "antd";
+import { Modal, Popconfirm, Spin, type PopconfirmProps } from "antd";
 import toast from "react-hot-toast";
 
 const locales = { "en-US": enUS };
@@ -49,7 +49,6 @@ const CalendarComponent = () => {
     loader,
     setLoader,
     email,
-    searchedTerm,
   } = useContext(UContext);
 
   const LoggedUserId = localStorage.getItem("userId");
@@ -67,6 +66,9 @@ const CalendarComponent = () => {
   const handleOk = () => setIsEventModalOpen(false);
   const handleCancel = () => setIsEventModalOpen(false);
   const onClose = () => setIsEventModalOpen(false);
+  const cancel: PopconfirmProps["onCancel"] = (e) => {
+    console.log(e);
+  };
 
   const fetchEvents = async () => {
     try {
@@ -196,14 +198,31 @@ const CalendarComponent = () => {
                 : "bg-green-500"
             }`}
           >
-            {!currentUser && (
-              <button
-                onClick={() => handleDelete(currentEvent as EventInterface)}
-                className="absolute top-4 right-15 p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
-              >
-                <Trash2 size={20} />
-              </button>
-            )}
+            {!currentUser &&
+              (currentEvent?.recurrence !== "NO" ? (
+                <Popconfirm
+                  title="Delete recurring event?"
+                  description="This will delete all occurrences of this event."
+                  onConfirm={() => handleDelete(currentEvent as EventInterface)}
+                  onCancel={cancel}
+                  okText="Delete All"
+                  cancelText="Cancel"
+                  classNames={{
+                    root: "my-popconfirm",
+                  }}
+                >
+                  <button className="absolute top-4 right-15 p-2 rounded-full bg-white/10 hover:bg-white/20 transition">
+                    <Trash2 size={20} />
+                  </button>
+                </Popconfirm>
+              ) : (
+                <button
+                  onClick={() => handleDelete(currentEvent as EventInterface)}
+                  className="absolute top-4 right-15 p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
+                >
+                  <Trash2 size={20} />
+                </button>
+              ))}
             <button
               onClick={onClose}
               className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition"

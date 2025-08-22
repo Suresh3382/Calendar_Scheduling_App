@@ -14,6 +14,7 @@ import { baseURL } from "./baseURL";
 import type { View } from "react-big-calendar";
 import { Toaster } from "react-hot-toast";
 import ProfilePage from "./Components/Profile/ProfilePage";
+import Home from "./Components/Home/Home";
 
 const App = () => {
   const [userEvents, setUserEvents] = useState<EventInterface[]>([]);
@@ -86,6 +87,7 @@ const App = () => {
           element={!Token ? <Login /> : <Navigate to="/" />}
         />
         <Route path="/signup" element={<Signup />} />
+
         <Route
           path="/"
           element={
@@ -93,16 +95,12 @@ const App = () => {
               <Layout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/Profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<Home />} />
+          <Route path="Profile" element={<ProfilePage />} />
+        </Route>
       </Routes>
+
       <Toaster />
     </UContext.Provider>
   );
